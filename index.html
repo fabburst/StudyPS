@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Accueil</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdn.auth0.com/js/auth0/9.18/auth0.min.js"></script>
+    <script src="script.js"></script>
+</head>
+<body>
+    <div id="login-container">
+        <button id="login-button" onclick="login()">Connexion</button>
+    </div>
+
+    <div id="icons-container" style="display:none;">
+        <div class="icon">
+            <a href="index.html">
+                <i class="fas fa-home" style="font-size: 4em;"></i>
+                <p>Cloze</p>
+            </a>
+        </div>
+        <div class="icon">
+            <a href="pomodoro.html">
+                <i class="fas fa-clock" style="font-size: 4em;"></i>
+                <p>Pomodoro</p>
+            </a>
+        </div>
+        <div class="icon">
+            <a href="speech.html">
+                <i class="fas fa-comments" style="font-size: 4em;"></i>
+                <p>Speech</p>
+            </a>
+        </div>
+        <div class="icon">
+            <a href="help.html">
+                <i class="fas fa-question-circle" style="font-size: 4em;"></i>
+                <p>Help</p>
+            </a>
+        </div>
+    </div>
+
+    <script>
+        const auth0 = new auth0.WebAuth({
+            domain: 'dev-5pmknzeckyuk52en.us.auth0.com',
+            clientID: '4mGAq4RLe3Vklg2PA7nhHWKwBSEjlYnb',
+            redirectUri: window.location.href,
+            responseType: 'token id_token',
+            scope: 'openid profile email'
+        });
+
+        function login() {
+            auth0.authorize();
+        }
+
+        function handleAuthentication() {
+            auth0.parseHash((err, authResult) => {
+                if (authResult && authResult.accessToken && authResult.idToken) {
+                    window.location.hash = '';
+                    auth0.client.userInfo(authResult.accessToken, function(err, user) {
+                        if (user) {
+                            document.getElementById('login-container').style.display = 'none';
+                            document.getElementById('icons-container').style.display = 'flex';
+                        }
+                    });
+                } else if (err) {
+                    console.log(err);
+                }
+            });
+        }
+
+        window.onload = function() {
+            handleAuthentication();
+        };
+    </script>
+</body>
+</html>
